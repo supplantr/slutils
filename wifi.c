@@ -50,7 +50,8 @@ int put_info(int fd, struct iwreq *rqt)
     }
 
     fclose(fp);
-    printf("N/A\n");
+    printf(format, 0, "N/A");
+    printf("\n");
     fflush(stdout);
     return EXIT_FAILURE;
 }
