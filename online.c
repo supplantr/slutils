@@ -3,34 +3,38 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "common.h"
 
+#define FORMAT    "%s"
 #define INTERVAL  3
 #define INTERFACE "wlp3s0"
 
+char *format = FORMAT;
 char *interface = INTERFACE;
 
 int put_info(void)
 {
     FILE *fp;
-    char buf[BUF_LEN];
+    char path[64], state[4];
 
-    if ((fp = fopen("/proc/net/route", "r")) == NULL) {
-        fprintf(stderr, "error: can't open /proc/net/route\n");
+    snprintf(path, sizeof(path), "/sys/class/net/%s/operstate", interface);
+
+    if ((fp = fopen(path, "r")) == NULL) {
+        fprintf(stderr, "error: can't open %s\n", path);
         exit(EXIT_FAILURE);
     }
 
-    while (fgets(buf, BUF_LEN, fp) != NULL) {
-        if (strncmp(interface, buf, strlen(interface)) == 0) {
-            fclose(fp);
-            printf("Online\n");
-            fflush(stdout);
-            return EXIT_SUCCESS;
-        }
+    fscanf(fp, "%s", state);
+    fclose(fp);
+
+    if (strncmp(state, "up", 2) == 0) {
+        printf(format, "Online");
+        printf("\n");
+        fflush(stdout);
+        return EXIT_SUCCESS;
     }
 
-    fclose(fp);
-    printf("Offline\n");
+    printf(format, "Offline");
+    printf("\n");
     fflush(stdout);
     return EXIT_FAILURE;
 }
@@ -41,14 +45,17 @@ int main(int argc, char *argv[])
     int interval = INTERVAL;
 
     char opt;
-    while ((opt = getopt(argc, argv, "hsi:w:")) != -1) {
+    while ((opt = getopt(argc, argv, "hsf:i:w:")) != -1) {
         switch (opt) {
             case 'h':
-                printf("online [-h|-s|-i INTERVAL|-w INTERFACE]\n");
+                printf("online [-h|-s|-f FORMAT|-i INTERVAL|-w INTERFACE]\n");
                 exit(EXIT_SUCCESS);
                 break;
             case 's':
                 snoop = true;
+                break;
+            case 'f':
+                format = optarg;
                 break;
             case 'i':
                 interval = atoi(optarg);
