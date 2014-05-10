@@ -1,6 +1,6 @@
 music: LDFLAGS += -lmpd
 music: music.c
-online: online.c common.h
+online: online.c
 volume: LDFLAGS += -lasound
 volume: volume.c
-wifi: wifi.c common.h
+wifi: wifi.c

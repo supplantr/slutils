@@ -6,10 +6,10 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <linux/wireless.h>
-#include "common.h"
 
 #define OFFSET(X) ((6-X) > 0 ? (6-X) : 0)
 
+#define BUF_LEN   128
 #define FORMAT    "%i %s"
 #define INTERVAL  3
 #define INTERFACE "wlp3s0"
