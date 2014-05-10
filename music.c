@@ -61,7 +61,7 @@ void mpd_conn_changed(MpdObj *mpd, int connect, int *mpd_conn)
     *mpd_conn = connect;
 }
 
-void put_info(MpdObj *mpd, struct mpd_data *data)
+int put_info(MpdObj *mpd, struct mpd_data *data)
 {
     if (!mpd_conn) {
         freopen("/dev/null", "w", stderr);
@@ -74,7 +74,12 @@ void put_info(MpdObj *mpd, struct mpd_data *data)
 
     if (!mpd_conn) {
         printf(format, "Not connected", "", "", "");
-    } else if (data->state == MPD_PLAYER_PAUSE) {
+        printf("\n");
+        fflush(stdout);
+        return EXIT_FAILURE;
+    }
+
+    if (data->state == MPD_PLAYER_PAUSE) {
         printf(format, "Paused", data->title, data->artist, data->album);
     } else if (data->state == MPD_PLAYER_PLAY) {
         printf(format, "Playing", data->title, data->artist, data->album);
@@ -84,6 +89,7 @@ void put_info(MpdObj *mpd, struct mpd_data *data)
 
     printf("\n");
     fflush(stdout);
+    return EXIT_SUCCESS;
 }
 
 int main(int argc, char *argv[])
@@ -137,5 +143,5 @@ int main(int argc, char *argv[])
             sleep(interval);
         }
     else
-        put_info(mpd, &data);
+        return put_info(mpd, &data);
 }
