@@ -35,14 +35,17 @@ int main(int argc, char *argv[])
 	int interval = INTERVAL;
 
 	char opt;
-	while ((opt = getopt(argc, argv, "hsi:p:")) != -1) {
+	while ((opt = getopt(argc, argv, "hsf:i:p:")) != -1) {
 		switch (opt) {
 			case 'h':
-				printf("temp [-h|-s|-i INTERVAL|-p PATH]\n");
+				printf("temp [-h|-s|-f FORMAT|-i INTERVAL|-p PATH]\n");
 				exit(EXIT_SUCCESS);
 				break;
 			case 's':
 				snoop = true;
+				break;
+			case 'f':
+				format = optarg;
 				break;
 			case 'i':
 				interval = atoi(optarg);
